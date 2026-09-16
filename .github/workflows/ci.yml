@@ -1,0 +1,32 @@
+name: CI - Chạy Jest Test
+# Kích hoạt workflow khi push hoặc pull request lên nhánh main
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  test:
+    name: Chạy Unit Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]   # Test trên nhiều phiên bản Node.js
+    steps:
+      # Bước 1: Checkout source code từ repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+      # Bước 2: Cài đặt Node.js
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'                # Cache dependencies để chạy nhanh hơn
+      # Bước 3: Cài đặt dependencies
+      - name: Cài đặt dependencies
+        run: npm ci
+      # Bước 4: Chạy test
+      - name: Chạy Jest test
+        run: npm test
